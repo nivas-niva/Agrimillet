@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user.dart';
+import '../../utils/ui_constants.dart';
+import '../../widgets/interactive_button.dart';
+import 'dart:ui';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -152,211 +155,311 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: AppBar(
         title: const Text('Create Account'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Sign Up',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
-            // Name Field
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Full Name',
-                hintText: 'Enter your name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.person),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Email Field
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.email),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            // Password Field
-            TextField(
-              controller: _passwordController,
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() => _obscurePassword = !_obscurePassword);
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Mobile Number Field
-            TextField(
-              controller: _mobileController,
-              decoration: InputDecoration(
-                labelText: 'Mobile Number',
-                hintText: 'Enter 10 digit mobile number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.phone),
-              ),
-              keyboardType: TextInputType.phone,
-              maxLength: 10,
-            ),
-            const SizedBox(height: 16),
-            // User Type Selection
-            const Text(
-              'Account Type',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile(
-                    title: const Text('Farmer'),
-                    value: 'farmer',
-                    groupValue: _selectedUserType,
-                    onChanged: (value) {
-                      setState(() => _selectedUserType = value.toString());
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: RadioListTile(
-                    title: const Text('Buyer'),
-                    value: 'buyer',
-                    groupValue: _selectedUserType,
-                    onChanged: (value) {
-                      setState(() => _selectedUserType = value.toString());
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // State Selection
-            const Text(
-              'State',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<String>(
-              isExpanded: true,
-              value: _selectedState,
-              items: indianStates
-                  .map((state) => DropdownMenuItem(
-                        value: state,
-                        child: Text(state),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() => _selectedState = value!);
-              },
-            ),
-            const SizedBox(height: 16),
-            // District Selection (simplified)
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'District',
-                hintText: 'Enter your district',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onChanged: (value) => _selectedDistrict = value,
-            ),
-            // Conditional: Farmer Banking Details
-            if (_selectedUserType == 'farmer') ...[
-              const SizedBox(height: 24),
-              const Text(
-                'Banking Details',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Provide either account number or UPI ID',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _accountNumberController,
-                decoration: InputDecoration(
-                  labelText: 'Account Number',
-                  hintText: 'Your bank account number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _ifscController,
-                decoration: InputDecoration(
-                  labelText: 'IFSC Code',
-                  hintText: 'Your bank IFSC code',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _upiController,
-                decoration: InputDecoration(
-                  labelText: 'UPI ID',
-                  hintText: 'Your UPI ID (e.g., name@upi)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 32),
-            // Sign Up Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleSignup,
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+      backgroundColor: AppColors.background,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF0F1711), Color(0xFF1B261D)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.03),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withOpacity(0.08), width: 1.2),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      )
-                    : const Text('Create Account'),
+                        const SizedBox(height: 20),
+                        // Name Field
+                        TextField(
+                          controller: _nameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            labelText: 'Full Name',
+                            labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                            hintText: 'Enter your name',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                            ),
+                            prefixIcon: Icon(Icons.person, color: Colors.white.withOpacity(0.7), size: 18),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Email Field
+                        TextField(
+                          controller: _emailController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            labelText: 'Email',
+                            labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                            hintText: 'Enter your email',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                            ),
+                            prefixIcon: Icon(Icons.email, color: Colors.white.withOpacity(0.7), size: 18),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        const SizedBox(height: 16),
+                        // Password Field
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            labelText: 'Password',
+                            labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                            hintText: 'Enter your password',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                            ),
+                            prefixIcon: Icon(Icons.lock, color: Colors.white.withOpacity(0.7), size: 18),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                color: Colors.white.withOpacity(0.7),
+                                size: 18,
+                              ),
+                              onPressed: () {
+                                setState(() => _obscurePassword = !_obscurePassword);
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Mobile Number Field
+                        TextField(
+                          controller: _mobileController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            labelText: 'Mobile Number',
+                            labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                            hintText: 'Enter 10 digit number',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                            ),
+                            prefixIcon: Icon(Icons.phone, color: Colors.white.withOpacity(0.7), size: 18),
+                          ),
+                          keyboardType: TextInputType.phone,
+                          maxLength: 10,
+                        ),
+                        const SizedBox(height: 16),
+                        // User Type Selection
+                        const Text(
+                          'Account Type',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        const SizedBox(height: 8),
+                        Theme(
+                          data: ThemeData.dark(),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: RadioListTile(
+                                  title: const Text('Farmer', style: TextStyle(fontSize: 13)),
+                                  value: 'farmer',
+                                  groupValue: _selectedUserType,
+                                  onChanged: (value) {
+                                    setState(() => _selectedUserType = value.toString());
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: RadioListTile(
+                                  title: const Text('Buyer', style: TextStyle(fontSize: 13)),
+                                  value: 'buyer',
+                                  groupValue: _selectedUserType,
+                                  onChanged: (value) {
+                                    setState(() => _selectedUserType = value.toString());
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // State Selection
+                        const Text(
+                          'Location',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        const SizedBox(height: 8),
+                        Theme(
+                          data: ThemeData.dark(),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: _selectedState,
+                            dropdownColor: const Color(0xFF1B261D),
+                            items: indianStates
+                                .map((state) => DropdownMenuItem(
+                                      value: state,
+                                      child: Text(state, style: const TextStyle(fontSize: 14)),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() => _selectedState = value!);
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            labelText: 'District',
+                            labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                            hintText: 'Enter your district',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                            ),
+                          ),
+                          onChanged: (value) => _selectedDistrict = value,
+                        ),
+                        // Conditional: Farmer Banking Details
+                        if (_selectedUserType == 'farmer') ...[
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Banking Details',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Provide either account number or UPI ID',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: _accountNumberController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              labelText: 'Account Number',
+                              labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                              hintText: 'Your bank account number',
+                              hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _ifscController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              labelText: 'IFSC Code',
+                              labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                              hintText: 'Your bank IFSC code',
+                              hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _upiController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              labelText: 'UPI ID',
+                              labelStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13),
+                              hintText: 'Your UPI ID (e.g., name@upi)',
+                              hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(color: AppColors.accent, width: 2),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 24),
+                        InteractiveButton(
+                          text: 'Create Account',
+                          isLoading: _isLoading,
+                          onPressed: _handleSignup,
+                          color: AppColors.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

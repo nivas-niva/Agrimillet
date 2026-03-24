@@ -15,6 +15,7 @@ import 'screens/common/chat_screen.dart';
 import 'screens/common/profile_screen.dart';
 import 'screens/common/transaction_history_screen.dart';
 import 'screens/common/voice_assistant_screen.dart';
+import 'utils/ui_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,21 +38,43 @@ class MyApp extends StatelessWidget {
         title: 'AgriMillet',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          brightness: Brightness.dark,
           primarySwatch: Colors.green,
-          primaryColor: const Color(0xFF2E7D32),
+          primaryColor: AppColors.primary,
+          scaffoldBackgroundColor: AppColors.background,
           useMaterial3: true,
           fontFamily: 'Roboto',
           appBarTheme: const AppBarTheme(
             elevation: 0,
-            backgroundColor: Color(0xFF2E7D32),
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
+            foregroundColor: AppColors.textPrimary,
+            centerTitle: true,
+            titleTextStyle: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: AppColors.surface,
+            selectedItemColor: AppColors.accent,
+            unselectedItemColor: AppColors.textSecondary,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+          ),
+          cardTheme: CardThemeData(
+            color: AppColors.surface,
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2E7D32),
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
             ),
           ),
         ),

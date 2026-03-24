@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/crop_provider.dart';
 import '../common/chat_screen.dart';
+import '../../widgets/neumorphic_card.dart';
+import '../../widgets/fade_in_switcher.dart';
+import '../../utils/ui_constants.dart';
 
 class FarmerHomeScreen extends StatefulWidget {
   const FarmerHomeScreen({Key? key}) : super(key: key);
@@ -120,70 +123,104 @@ class _FarmerHomeScreenState extends State<FarmerHomeScreen> {
   Widget _buildHomeTab() {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome Card
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome, ${authProvider.user?.name}!',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${authProvider.user?.district}, ${authProvider.user?.state}',
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Quick Actions
-              const Text(
-                'Quick Actions',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildActionCard(
-                    icon: Icons.add_circle,
-                    title: 'Upload Crop',
-                    onTap: () => Navigator.pushNamed(context, '/upload-crop'),
+                  // Welcome Card
+                  FadeInSwitcher(
+                    child: NeumorphicCard(
+                      margin: EdgeInsets.zero,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: AppColors.accent,
+                                child: const Icon(Icons.person, color: Colors.white, size: 18),
+                              ),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Welcome, ${authProvider.user?.name}!',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${authProvider.user?.district}, ${authProvider.user?.state}',
+                                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  _buildActionCard(
-                    icon: Icons.list,
-                    title: 'My Crops',
-                    onTap: () => setState(() => _currentIndex = 1),
+                  const SizedBox(height: 28),
+
+                  // Quick Actions
+                  const FadeInSwitcher(
+                    delay: Duration(milliseconds: 200),
+                    child: Text(
+                      'Quick Actions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                        color: AppColors.accent,
+                      ),
+                    ),
                   ),
-                  _buildActionCard(
-                    icon: Icons.shopping_bag,
-                    title: 'Orders',
-                    onTap: () => setState(() => _currentIndex = 2),
-                  ),
-                  _buildActionCard(
-                    icon: Icons.location_on,
-                    title: 'Tracking',
-                    onTap: () => setState(() => _currentIndex = 2),
+                  const SizedBox(height: 16),
+                  FadeInSwitcher(
+                    delay: const Duration(milliseconds: 300),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.6,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildActionCard(
+                          icon: Icons.add_circle,
+                          title: 'Upload Crop',
+                          onTap: () => Navigator.pushNamed(context, '/upload-crop'),
+                        ),
+                        _buildActionCard(
+                          icon: Icons.list,
+                          title: 'My Crops',
+                          onTap: () => setState(() => _currentIndex = 1),
+                        ),
+                        _buildActionCard(
+                          icon: Icons.shopping_bag,
+                          title: 'Orders',
+                          onTap: () => setState(() => _currentIndex = 2),
+                        ),
+                        _buildActionCard(
+                          icon: Icons.location_on,
+                          title: 'Tracking',
+                          onTap: () => setState(() => _currentIndex = 2),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -203,27 +240,52 @@ class _FarmerHomeScreenState extends State<FarmerHomeScreen> {
           );
         }
 
-        return ListView.builder(
-          itemCount: cropProvider.myCrops.length,
-          itemBuilder: (context, index) {
-            final crop = cropProvider.myCrops[index];
-            return Card(
-              margin: const EdgeInsets.all(8),
-              child: ListTile(
-                title: Text(crop.milletType),
-                subtitle: Text(
-                  '${crop.quantity} kg - ₹${crop.expectedPrice}/kg',
+        return FadeInSwitcher(
+          child: ListView.builder(
+            itemCount: cropProvider.myCrops.length,
+            padding: const EdgeInsets.all(8),
+            itemBuilder: (context, index) {
+              final crop = cropProvider.myCrops[index];
+              return NeumorphicCard(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  title: Text(
+                    crop.milletType,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  subtitle: Text(
+                    '${crop.quantity} kg - ₹${crop.expectedPrice}/kg',
+                    style: const TextStyle(color: AppColors.textSecondary),
+                  ),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: crop.status == 'available'
+                          ? AppColors.primary.withOpacity(0.2)
+                          : Colors.grey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: crop.status == 'available'
+                            ? AppColors.primary
+                            : Colors.grey,
+                      ),
+                    ),
+                    child: Text(
+                      crop.status.toUpperCase(),
+                      style: TextStyle(
+                        color: crop.status == 'available'
+                            ? AppColors.accent
+                            : Colors.white70,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-                trailing: Chip(
-                  label: Text(crop.status),
-                  backgroundColor: crop.status == 'available'
-                      ? Colors.green
-                      : Colors.grey,
-                  labelStyle: const TextStyle(color: Colors.white),
-                ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
@@ -272,18 +334,31 @@ class _FarmerHomeScreenState extends State<FarmerHomeScreen> {
     required String title,
     required VoidCallback onTap,
   }) {
-    return Card(
+    return NeumorphicCard(
+      padding: EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: const Color(0xFF2E7D32)),
-            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 16, color: AppColors.accent),
+            ),
+            const SizedBox(height: 4),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: AppColors.textPrimary,
+              ),
             ),
           ],
         ),

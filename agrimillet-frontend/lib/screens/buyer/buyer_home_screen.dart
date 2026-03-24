@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/crop_provider.dart';
 import '../common/chat_screen.dart';
+import '../../widgets/neumorphic_card.dart';
+import '../../widgets/fade_in_switcher.dart';
+import '../../utils/ui_constants.dart';
+import 'dart:ui';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({Key? key}) : super(key: key);
@@ -121,42 +125,72 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
   Widget _buildHomeTab() {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
+              FadeInSwitcher(
+                child: NeumorphicCard(
+                  margin: EdgeInsets.zero,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Welcome, ${authProvider.user?.name}!',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${authProvider.user?.district}, ${authProvider.user?.state}',
-                        style: const TextStyle(color: Colors.grey),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 16,
+                            backgroundColor: AppColors.accent,
+                            child: const Icon(Icons.shopping_bag, color: Colors.white, size: 18),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome, ${authProvider.user?.name}!',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              Text(
+                                '${authProvider.user?.district}, ${authProvider.user?.state}',
+                                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Browse Millets',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const SizedBox(height: 28),
+              const FadeInSwitcher(
+                delay: Duration(milliseconds: 200),
+                child: Text(
+                  'Browse Millets',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
+                    color: AppColors.accent,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
-              _buildMarketCards(),
-            ],
+                  FadeInSwitcher(
+                    delay: const Duration(milliseconds: 300),
+                    child: _buildMarketCards(),
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },
@@ -167,42 +201,44 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     return Row(
       children: [
         Expanded(
-          child: Card(
+          child: NeumorphicCard(
+            margin: EdgeInsets.zero,
             child: InkWell(
               onTap: () {
                 setState(() => _selectedMarket = 'state');
                 setState(() => _currentIndex = 1);
               },
-              child: const Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Icon(Icons.map, size: 40, color: Color(0xFF2E7D32)),
-                    SizedBox(height: 8),
-                    Text('State Market'),
-                  ],
-                ),
+              child: const Column(
+                children: [
+                  Icon(Icons.map, size: 20, color: AppColors.accent),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'State Market',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 16),
         Expanded(
-          child: Card(
+          child: NeumorphicCard(
+            margin: EdgeInsets.zero,
             child: InkWell(
               onTap: () {
                 setState(() => _selectedMarket = 'national');
                 setState(() => _currentIndex = 1);
               },
-              child: const Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Icon(Icons.public, size: 40, color: Color(0xFF2E7D32)),
-                    SizedBox(height: 8),
-                    Text('National Market'),
-                  ],
-                ),
+              child: const Column(
+                children: [
+                  Icon(Icons.public, size: 20, color: AppColors.accent),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'National Market',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ],
               ),
             ),
           ),
@@ -256,40 +292,77 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
 
               return ListView.builder(
                 itemCount: cropProvider.crops.length,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemBuilder: (context, index) {
                   final crop = cropProvider.crops[index];
-                  return Card(
-                    margin: const EdgeInsets.all(8),
-                    child: ListTile(
-                      title: Text(crop.milletType),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Available: ${crop.quantity} kg'),
-                          Row(
+                  return FadeInSwitcher(
+                    delay: Duration(milliseconds: index * 50),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: AppDecorations.glass(borderRadius: 20),
+                      clipBehavior: Clip.antiAlias,
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          title: Text(
+                            crop.milletType,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (crop.governmentPrice != null)
-                                Text(
-                                  'Gov: ₹${crop.governmentPrice}/kg',
-                                  style: const TextStyle(color: Colors.blue),
-                                ),
-                              const SizedBox(width: 8),
+                              const SizedBox(height: 4),
                               Text(
-                                'Ask: ₹${crop.expectedPrice}/kg',
-                                style: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                'Available: ${crop.quantity} kg',
+                                style: const TextStyle(color: AppColors.textSecondary),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  if (crop.governmentPrice != null)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        'Gov: ₹${crop.governmentPrice}/kg',
+                                        style: const TextStyle(color: Colors.blue, fontSize: 12),
+                                      ),
+                                    ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '₹${crop.expectedPrice}/kg',
+                                    style: const TextStyle(
+                                      color: AppColors.accent,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/crop-details', arguments: crop.id);
-                        },
-                        child: const Text('View'),
+                          trailing: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/crop-details', arguments: crop.id);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accent,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                              minimumSize: const Size(60, 30),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: const Text('VIEW', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                          ),
+                        ),
                       ),
                     ),
                   );

@@ -4,6 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../providers/crop_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../utils/ui_constants.dart';
+import '../../widgets/neumorphic_card.dart';
+import '../../widgets/interactive_button.dart';
+import '../../widgets/fade_in_switcher.dart';
 
 class UploadCropScreen extends StatefulWidget {
   const UploadCropScreen({Key? key}) : super(key: key);
@@ -168,13 +172,12 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Upload Crop'),
-        backgroundColor: const Color(0xFF2E7D32),
-        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -188,14 +191,14 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF333333),
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 initialValue: _selectedMilletType,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
@@ -205,7 +208,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                     borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.surface,
                 ),
                 items: _milletTypes.map((type) {
                   return DropdownMenuItem(value: type, child: Text(type));
@@ -226,7 +229,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF333333),
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -234,7 +237,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 controller: _quantityController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   hintText: 'Enter quantity',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -245,7 +248,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                     borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.surface,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Please enter quantity';
@@ -262,7 +265,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF333333),
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -271,9 +274,9 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFDDDDDD)),
+                    border: Border.all(color: AppColors.shadowDark),
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
+                    color: AppColors.surface,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,7 +305,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF333333),
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -342,9 +345,9 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE0E0E0)),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.accent.withOpacity(0.3)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -356,7 +359,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                           'Government Price (per kg)',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF666666),
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -367,7 +370,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF2E7D32),
+                            color: AppColors.accent,
                           ),
                         ),
                       ],
@@ -377,7 +380,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                       child: ElevatedButton(
                         onPressed: _loadingGovernmentPrice ? null : _fetchGovernmentPrice,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2E7D32),
+                          backgroundColor: AppColors.primary,
                           disabledBackgroundColor: Colors.grey,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
@@ -409,7 +412,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF333333),
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -417,7 +420,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 controller: _expectedPriceController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   hintText: 'Enter expected price',
                   prefixText: '₹ ',
                   border: OutlineInputBorder(
@@ -429,7 +432,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                     borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.surface,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Please enter expected price';
@@ -446,7 +449,7 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF333333),
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -454,30 +457,30 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 onTap: _pickImages,
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: const Color(0xFF2E7D32),
-                      width: 2,
+                      color: AppColors.accent.withOpacity(0.5),
+                      width: 1.0,
                       style: BorderStyle.solid,
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                    color: const Color(0xFFF0F7ED),
+                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.surface,
                   ),
                   child: Column(
                     children: [
                       const Icon(
                         Icons.image_outlined,
-                        size: 40,
-                        color: Color(0xFF2E7D32),
+                        size: 24,
+                        color: AppColors.accent,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       const Text(
                         'Tap to select images',
                         style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF2E7D32),
-                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                          color: AppColors.accent,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -508,8 +511,8 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.file(
                                 _selectedImages[index],
-                                width: 100,
-                                height: 100,
+                                width: 50,
+                                height: 50,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -543,39 +546,13 @@ class _UploadCropScreenState extends State<UploadCropScreen> {
                 ),
               const SizedBox(height: 32),
 
-              // Submit Button
               Consumer<CropProvider>(
                 builder: (context, cropProvider, _) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: cropProvider.isLoading ? null : _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E7D32),
-                        disabledBackgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: cropProvider.isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Text(
-                              'Upload Crop',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                    ),
+                  return InteractiveButton(
+                    text: 'Upload Crop',
+                    isLoading: cropProvider.isLoading,
+                    onPressed: _submitForm,
+                    color: AppColors.primary,
                   );
                 },
               ),

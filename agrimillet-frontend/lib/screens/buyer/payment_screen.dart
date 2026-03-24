@@ -71,14 +71,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+        showDialog(
+         context: context,
+         builder: (context) => AlertDialog(
+           title: const Text("Payment Success"),
+           content: const Text("Your order has been placed successfully!"),
+           actions: [
+             TextButton(
+               onPressed: () {
+                 Navigator.of(context).pop();
+                 Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+               child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
         // Navigate back to home after short delay
         await Future.delayed(const Duration(seconds: 2));
         if (mounted) {
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
-      }
-    } catch (error) {
+    } 
+    catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
